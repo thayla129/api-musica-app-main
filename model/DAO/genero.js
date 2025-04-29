@@ -101,7 +101,7 @@ const selectAllGenero = async function(){
 try {
 
     //Script SQL 
-    let sql = 'select * from tbl_genero order by id desc'
+    let sql = 'select * from tbl_genero order by id_desc'
 
 
     //Exeuta o script SQL no BD e aguada o retorno dos daods 
