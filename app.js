@@ -90,7 +90,7 @@ app.put('/v1/controle-musicas/musica/:id', cors(), bodyParserJSON, async functio
     ENDPOINT DE GÊNERO
  ***********************/
 
-// POST - Cadastrar novo gênero
+// POST - Inserir novo gênero
 app.post('/v1/controle-musicas/genero', cors(), bodyParserJSON, async function (request, response) {
     let contentType = request.headers['content-type']
     let dadosBody = request.body
@@ -104,8 +104,6 @@ app.post('/v1/controle-musicas/genero', cors(), bodyParserJSON, async function (
 // GET - Listar todos os gêneros
 app.get('/v1/controle-musicas/genero', cors(), async function (request, response) {
     let result = await controllerGenero.listarGeneros()
-    console.log(result)
-
 
     response.status(result.status_code)
     response.json(result)
@@ -114,7 +112,7 @@ app.get('/v1/controle-musicas/genero', cors(), async function (request, response
 // GET - Buscar gênero por ID
 app.get('/v1/controle-musicas/genero/:id', cors(), async function (request, response) {
     let idGenero = request.params.id
-    let result = await controllerGenero.buscarGenero(idGenero)
+    let result = await controllerGenero.buscarGeneroPorId(idGenero)
 
     response.status(result.status_code)
     response.json(result)
@@ -126,7 +124,7 @@ app.put('/v1/controle-musicas/genero/:id', cors(), bodyParserJSON, async functio
     let idGenero = request.params.id
     let dadosBody = request.body
 
-    let result = await controllerGenero.atualizarGenero(dadosBody, idGenero, contentType)
+    let result = await controllerGenero.atualizarGenero(idGenero, dadosBody, contentType)
 
     response.status(result.status_code)
     response.json(result)
@@ -140,6 +138,7 @@ app.delete('/v1/controle-musicas/genero/:id', cors(), async function (request, r
     response.status(result.status_code)
     response.json(result)
 })
+
 
 
 

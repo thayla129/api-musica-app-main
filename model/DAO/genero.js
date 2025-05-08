@@ -1,145 +1,75 @@
 /*
-
-* Objetivo: Model responsável pelo CRUD de dados de música no Banco de Dados 
-* Data: 13/02/25
+* Objetivo: Model responsável pelo CRUD de dados de gênero no Banco de Dados 
+* Data: 13/02/25 (Atualizado)
 * Autor: Thayla Amorim Mateus
-* Versão: 1.0
+* Versão: 1.1
 */
 
-//import da biblioteca Prisma/Client
 const { PrismaClient } = require('@prisma/client')
-
-//instanciando (criar um novo objeto) para realizar a manipulação do script SQL
 const prisma = new PrismaClient()
 
-//função para inserir uma nova música no banco de dados
-const insertGenero = async function(genero){
-try {
-        
-    let sql = `insert into tbl_genero ( nome,
-                                        link,
-                                        duracao,
-                                        data_lancamento,
-                                        foto_capa,
-                                        letra
-                                        )
-                                values (
-                                        '${genero.nome}',
-                                        '${genero.link}',
-                                        '${genero.duracao}',
-                                        '${genero.data_lancamento}',
-                                        '${genero.foto_capa}',
-                                        '${genero.letra}'
-                                        )`
-
-
-
-    //executa o script SQL no DB e aguarda o retorno do DB
-    let result = await prisma.$executeRawUnsafe(sql)
-
-
-    if(result){
-        return true
-    }else{
-        return false
-    }
-
-    } catch (error){
-        return false
-    }
-}
-
-//função para atualizar uma música existente no banco de dados
-const updateGenero = async function(genero){
+// Inserir novo gênero
+const insertGenero = async function (genero) {
     try {
-        
-        let sql = `update tbl_genero set nome =              '${genero.nome}',
-                                         link =              '${genero.link}',
-                                         duracao =           '${genero.duracao}',
-                                         data_lancamento =   '${genero.data_lancamento}',
-                                         foto_capa =         '${genero.foto_capa}',
-                                         letra =             '${genero.letra}'
-        where id=${genero.id}`
+        let sql = `
+            INSERT INTO tbl_genero (nome, descricao)
+            VALUES ('${genero.nome}', '${genero.descricao}')
+        `
         let result = await prisma.$executeRawUnsafe(sql)
-
-        if(result){
-            return true
-        }else{
-            return false
-        }
-
+        return result ? true : false
     } catch (error) {
         return false
     }
-
 }
 
-//função para excluir uma música existente no banco de dados
-const deleteGenero = async function(id){
+// Atualizar gênero existente
+const updateGenero = async function (genero) {
     try {
-       
-        //Script SQL 
-        let sql = 'delete from tbl_genero where id='+id
-    
-    
-        //Exeuta o script SQL no BD e aguada o retorno dos daods 
+        let sql = `
+            UPDATE tbl_genero 
+            SET nome = '${genero.nome}', 
+                descricao = '${genero.descricao}' 
+            WHERE id_genero = ${genero.id_genero}
+        `
         let result = await prisma.$executeRawUnsafe(sql)
-    
-        if(result)
-            return true
-        else 
-            return false
-    
-    
+        return result ? true : false
     } catch (error) {
-        return false 
+        return false
     }
 }
 
-//função para retornar todas as músicas do banco de dados
-const selectAllGenero = async function(){
-try {
-
-    //Script SQL 
-    let sql = 'select * from tbl_genero order by id_desc'
-
-
-    //Exeuta o script SQL no BD e aguada o retorno dos daods 
-    let result = await prisma.$queryRawUnsafe(sql)
-
-    if(result)
-        return result
-    else 
-        return false
-
-
-} catch (error) {
-    return false 
-}
-}
-
-//função para listar uma música pelo ID no banco de dados
-const selectByIdGenero = async function(id){
+// Excluir gênero por ID
+const deleteGenero = async function (id) {
     try {
-       
-    //Script SQL 
-    let sql = 'select * from tbl_genero where id='+id
-
-
-    //Exeuta o script SQL no BD e aguada o retorno dos daods 
-    let result = await prisma.$queryRawUnsafe(sql)
-
-    if(result)
-        return result
-    else 
+        let sql = `DELETE FROM tbl_genero WHERE id_genero = ${id}`
+        let result = await prisma.$executeRawUnsafe(sql)
+        return result ? true : false
+    } catch (error) {
         return false
-
-
-} catch (error) {
-    return false 
-}
+    }
 }
 
+// Selecionar todos os gêneros
+const selectAllGenero = async function () {
+    try {
+        let sql = `SELECT * FROM tbl_genero ORDER BY id_genero DESC`
+        let result = await prisma.$queryRawUnsafe(sql)
+        return result.length > 0 ? result : false
+    } catch (error) {
+        return false
+    }
+}
+
+// Selecionar gênero por ID
+const selectByIdGenero = async function (id) {
+    try {
+        let sql = `SELECT * FROM tbl_genero WHERE id_genero = ${id}`
+        let result = await prisma.$queryRawUnsafe(sql)
+        return result.length > 0 ? result[0] : false
+    } catch (error) {
+        return false
+    }
+}
 
 module.exports = {
     insertGenero,

@@ -12,7 +12,7 @@ create table tbl_musica (
     letra text
 );
 
-create table genero (
+create table tbl_genero (
     id_genero int auto_increment primary key,
     nome varchar(50) not null unique,
     descricao text

@@ -11,24 +11,20 @@ const generoDAO = require('../../model/DAO/genero.js');
 // Função para inserir um novo gênero
 const inserirGenero = async function (genero, contentType) {
     try {
-        if (String(contentType).toLowerCase() == 'application/json') { 
-            if (genero.nome == undefined || genero.nome == '' || genero.nome == null || genero.nome.length > 50) {
+        if (String(contentType).toLowerCase() === 'application/json') { 
+            if (!genero.nome || genero.nome.length > 50) {
                 return MESSAGE.ERROR_REQUIRE_FIELDS;
-            } else {
-                let generoExistente = await generoDAO.selectGeneroByNome(genero.nome);
-                
-                if (generoExistente) {
-                    return MESSAGE.ERROR_ITEM_ALREADY_EXISTS;
-                } else {
-                    let resultGenero = await generoDAO.insertGenero(genero);
-
-                    if (resultGenero) {
-                        return MESSAGE.SUCCESS_CREATED_ITEM;
-                    } else {
-                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL;
-                    }
-                }
             }
+
+            // Apenas tenta inserir sem verificar duplicidade
+            let resultGenero = await generoDAO.insertGenero(genero);
+
+            if (resultGenero) {
+                return MESSAGE.SUCCESS_CREATED_ITEM;
+            } else {
+                return MESSAGE.ERROR_INTERNAL_SERVER_MODEL;
+            }
+
         } else {
             return MESSAGE.ERROR_CONTENT_TYPE;
         } 
@@ -38,24 +34,19 @@ const inserirGenero = async function (genero, contentType) {
     }
 };
 
+
 // Função para atualizar um gênero
 const atualizarGenero = async function (id, genero, contentType) {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
-            if (genero.nome == undefined || genero.nome == '' || genero.nome == null || genero.nome.length > 50) {
+            if (!genero.nome || genero.nome.length > 50) {
                 return MESSAGE.ERROR_REQUIRE_FIELDS;
             } else {
+                // Verifica se o gênero existe no banco
                 let generoExistente = await generoDAO.selectGeneroById(id);
                 
                 if (!generoExistente) {
                     return MESSAGE.ERROR_NOT_FOUND;
-                }
-
-                if (genero.nome != generoExistente.nome) {
-                    let generoComMesmoNome = await generoDAO.selectGeneroByNome(genero.nome);
-                    if (generoComMesmoNome) {
-                        return MESSAGE.ERROR_ITEM_ALREADY_EXISTS;
-                    }
                 }
 
                 genero.id = id; // adiciona o id ao objeto para ser usado no update
@@ -75,6 +66,7 @@ const atualizarGenero = async function (id, genero, contentType) {
         return MESSAGE.ERROR_INTERNAL_CONTROLLER;
     }
 };
+
 
 // Função para excluir um gênero
 const excluirGenero = async function (id) {
