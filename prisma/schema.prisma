@@ -14,6 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model tbl_artista {
+  id        Int     @id @default(autoincrement())
+  nome      String  @db.VarChar(50)
+  biografia String? @db.VarChar(250)
+}
+
 model User{
   id Int @id @default(autoincrement())
   email String @unique
