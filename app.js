@@ -13,7 +13,7 @@ const bodyParser = require('body-parser')
 //Import das controllers do projeto
 const controllerMusica = require('./controller/musica/controllerMusica.js')
 const controllerGenero = require('./controller/genero/controllerGenero.js')
-const controllerArtista = require('./controller/artista/artista.js')
+const controllerArtista = require('./controller/artista/ControllerArtista.js')
 
 
 //Cria o formato de dados que será recebido no body da requisição (POST/PUT)
@@ -185,7 +185,7 @@ app.get('/v1/controle-musicas/artista/:id', cors(), async function(request, resp
 
 })
 
-//endpoint pr atualizar um artista
+//endpoint pra atualizar um artista
 app.put('/v1/controle-musicas/artista/:id', cors(), bodyParserJSON, async function(request, response){
     //recebe o content type da requisição
     let contentType = request.headers['content-type']

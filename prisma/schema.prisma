@@ -13,7 +13,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model tbl_teste{
+model User{
   id Int @id @default(autoincrement())
+  email String @unique
   nome String 
 }

@@ -1,7 +1,7 @@
 /**
   * Objetivo: Controller responsável pela manipilação do CRUD de dados de artista
   * Data: 17/04/2025
-  * Autor: Kauan Rodrigues
+  * Autor: Thayla Amorim Mateus
   * Versão: 1.0
   */
 

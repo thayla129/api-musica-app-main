@@ -1,117 +1,86 @@
 /**
- * Autor: Kauan Rodrigues
+ * Autor: Thayla Amorim Mateus
  * objetivo: model responsável pelo CRUD de dados de artistas no banco de dados
  * data: 24/04/2025
- * versão: 1.0
+ * versão: 2.0 (com proteção contra SQL Injection)
  */
 
-//import da biblioteca Prisma/Client
 const { PrismaClient } = require('@prisma/client')
-
-//instanciando (criar um novo objeto) para realizar a manipulação do script SQL
 const prisma = new PrismaClient()
 
-//função para inserir um novo artista no banco de dados
-const insertArtista = async function(artista){
+// Inserir novo artista (protegido contra SQL Injection)
+const insertArtista = async function(artista) {
     try {
-        let sql = `insert into tbl_artista(
-                                            nome,
-                                            biografia
-                                            )
-                                      values(
-                                             '${artista.nome}',
-                                             '${artista.biografia}'
-                                             )`
-                                             
-        let result = await prisma.$executeRawUnsafe(sql)
-
-        if(result)
-            return true
-        else
-            return false
-
-    } catch (error) {
-        console.log(error);
+        let sql = `insert into tbl_artista(nome, biografia) values($1, $2)`
+        let result = await prisma.$executeRawUnsafe(sql, [artista.nome, artista.biografia])
         
-        return false
-    }
-}
-
-//função para atualizar um artista existente no banco de dados
-const updateArtista = async function(artista){
-    try {
-        let sql = `update tbl_artista set nome= '${artista.nome}',
-                                            biografia= '${artista.biografia}'
-                                        where id=${artista.id}`
-                       
-        let result = await prisma.$executeRawUnsafe(sql)
-
-        if(result)
-            return true
-        else
-            return false
+        return !!result
 
     } catch (error) {
+        console.error('Erro no insertArtista:', error)
         return false
     }
 }
 
-
-//função para excluir uma artista existente no banco de dados
-const deleteArtista = async function(id){
+// Atualizar artista (protegido contra SQL Injection)
+const updateArtista = async function(artista) {
     try {
-        let sql = `delete from tbl_artista where id = ${id}`
+        let sql = `update tbl_artista set nome = $1, biografia = $2 where id = $3`
+        let result = await prisma.$executeRawUnsafe(sql, [
+            artista.nome, 
+            artista.biografia,
+            artista.id
+        ])
 
-        let result = await prisma.$executeRawUnsafe(sql)
-
-        if(result)
-            return true
-        else
-            return false
+        return !!result
 
     } catch (error) {
-        console.log(error)
+        console.error('Erro no updateArtista:', error)
         return false
     }
 }
 
-// Função para retornar todos os artistas do banco de dados
-const selectAllArtista = async function(){
+// Excluir artista (protegido contra SQL Injection)
+const deleteArtista = async function(id) {
+    try {
+        let sql = `delete from tbl_artista where id = $1`
+        let result = await prisma.$executeRawUnsafe(sql, [id])
+
+        return !!result
+
+    } catch (error) {
+        console.error('Erro no deleteArtista:', error)
+        return false
+    }
+}
+
+// Retornar todos os artistas
+const selectAllArtista = async function() {
     try {
         let sql = `select * from tbl_artista order by id desc`
-
         let result = await prisma.$queryRawUnsafe(sql)
 
-        if (result.length > 0)
-            return result
-        else
-            return false
+        return result.length > 0 ? result : false
 
     } catch (error) {
-        console.log(error)
+        console.error('Erro no selectAllArtista:', error)
         return false
     }
 }
 
-
-//função para listar um artista pelo ID no banco de dados
-const selectByIdArtista = async function(id){
+// Buscar artista por ID (protegido contra SQL Injection)
+const selectByIdArtista = async function(id) {
     try {
-        let sql = `select * from tbl_artista where id=`+id
-        console.log(sql)
-        let result = await prisma.$queryRawUnsafe(sql)
+        let sql = `select * from tbl_artista where id = $1`
+        let result = await prisma.$queryRawUnsafe(sql, [id])
 
-        if(result)
-            return result
-        else
-            return false
+        return result.length > 0 ? result : false
 
     } catch (error) {
-        console.log(error)
+        console.error('Erro no selectByIdArtista:', error)
         return false
     }
 }
-
 
 module.exports = {
     insertArtista,
